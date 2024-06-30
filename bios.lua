@@ -1,7 +1,7 @@
 term.clear()
 term.setCursorPos(1,1)
 term.write("BIOS loading")
-
+local args = {...}
 do
     local h = fs.open("/rom/modules/main/cc/expect.lua", "r")
     local f, err = (_VERSION == "Lua 5.1" and loadstring or load)(h.readAll(), "/rom/modules/main/cc/expect.lua")
@@ -225,7 +225,7 @@ local function intrnl_write(sText)
 end
 
 write = writeANSI(intrnl_write)
-
+--write = ansiWrite
 
 
 function print(...)
@@ -573,6 +573,8 @@ end
 
 print("")
 
+
+
 function loadfile(filename, mode, env)
     -- Support the previous `loadfile(filename, env)` form instead.
     if type(mode) == "table" and env == nil then
@@ -682,9 +684,11 @@ loadAPI("/rom/apis/keys.lua")
 loadAPI("/rom/apis/fs.lua")
 
 dofile("sys/boot/load/bootstrap.lua")
+
 xpcall(function()
-    dofile("sys/boot/kern/bin/kernel.lua")
+    loadfile("sys/boot/kern/bin/kernel.lua")(table.unpack(args))
 end,panic)
+
 
 
 term.setCursorBlink(true)
